@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Invite Creator</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #2c3e50, #3498db);
+            color: #333;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        h1 {
+            color: #0d47a1;
+            font-size: 24px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #3498db;
+            border-radius: 6px;
+            background: #f3f4f6;
+            font-size: 16px;
+            box-sizing: border-box;
+            resize: vertical;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #ff5722;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #ff6b00;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #ff5722;
+        }
+
+        .error-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, #4299e1, #7e3af2);
+            color: white;
+            padding: 15px 60px 15px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            z-index: 1000;
+        }
+
+        .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0;
+            width: auto;
+        }
+
+        .invitation {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+            border: 2px solid #e74c3c;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .invitation h2 {
+            color: #e74c3c;
+            margin: 0 0 10px;
+            font-size: 28px;
+            text-transform: uppercase;
+        }
+
+        .invitation .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .invitation .event-name {
+            color: #2c3e50;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .invitation .event-details {
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .invitation .event-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="formContainer">
+        <h1>Create an Event Invite</h1>
+        <form id="eventForm">
+            <div class="form-group">
+                <label for="eventName">Event Name</label>
+                <input type="text" id="eventName">
+            </div>
+            <div class="form-group">
+                <label for="eventDate">Event Date</label>
+                <input type="date" id="eventDate">
+            </div>
+            <div class="form-group">
+                <label for="startTime">Start Time</label>
+                <input type="time" id="startTime">
+            </div>
+            <div class="form-group">
+                <label for="endTime">End Time</label>
+                <input type="time" id="endTime">
+            </div>
+            <div class="form-group">
+                <label for="description">Event Description</label>
+                <textarea id="description" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location">
+            </div>
+            <button type="submit">Create Event</button>
+        </form>
+    </div>
+
+    <div class="container invitation" id="invitationContainer">
+        <h2>YOU ARE INVITED</h2>
+        <div class="subtitle">TO JOIN THE</div>
+        <div class="event-name" id="displayEventName"></div>
+        <div class="event-details" id="displayDateTime"></div>
+        <div class="event-details" id="displayLocation"></div>
+        <div class="event-description" id="displayDescription"></div>
+    </div>
+
+    <script>
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fields = ['eventName', 'eventDate', 'startTime', 'endTime', 'description', 'location'];
+            
+            for (const field of fields) {
+                if (!document.getElementById(field).value) {
+                    showError('Please fill in all fields');
+                    return;
+                }
+            }
+
+            // Format date and time
+            const date = new Date(document.getElementById('eventDate').value);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = date.toLocaleDateString('en-US', options);
+            
+            const startTime = formatTime(document.getElementById('startTime').value);
+            const endTime = formatTime(document.getElementById('endTime').value);
+
+            // Update invitation
+            document.getElementById('displayEventName').textContent = document.getElementById('eventName').value;
+            document.getElementById('displayDateTime').textContent = `${formattedDate}\n${startTime} - ${endTime}`;
+            document.getElementById('displayLocation').textContent = document.getElementById('location').value;
+            document.getElementById('displayDescription').textContent = document.getElementById('description').value;
+
+            // Show invitation, hide form
+            document.getElementById('formContainer').style.display = 'none';
+            document.getElementById('invitationContainer').style.display = 'block';
+        });
+
+        function showError(message) {
+            // Remove existing error if any
+            const existingError = document.querySelector('.error-message');
+            if (existingError) {
+                existingError.remove();
+            }
+
+            // Create new error message
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                ${message}
+                <button class="close-btn" onclick="this.parentElement.remove()">✕</button>
+            `;
+            document.body.appendChild(errorDiv);
+        }
+
+        function formatTime(time) {
+            const [hours, minutes] = time.split(':');
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 || 12;
+            return `${formattedHours}:${minutes} ${period}`;
+        }
+    </script>
+</body>
+</html>

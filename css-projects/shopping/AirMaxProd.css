@@ -1,0 +1,109 @@
+.product-detail {
+    display: flex;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    margin: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.product-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 20px;
+}
+
+.product-images img {
+    width: 100%;
+    border-radius: 16px;
+    transition: transform 0.4s ease;
+}
+
+.product-images img:hover {
+    transform: scale(1.02);
+}
+
+.product-info {
+    width: 50%;
+    padding: 2rem;
+}
+
+.product-info h1 {
+    color: #2c3e50;
+    font-size: 2em;
+}
+
+.product-description, .product-price {
+    color: #555;
+}
+
+.size-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 1rem;
+    margin: 2rem 0;
+}
+
+.size-selection button {
+    background: transparent;
+    border: 2px solid #e0e0e0;
+    padding: 1rem;
+    margin-right: 10px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.size-selection button:hover {
+    background: #434343;
+    color: white;
+    border-color: #434343;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.action-buttons button {
+    border-radius: 25px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    padding: 1rem 2rem;
+}
+
+.add-to-bag {
+    background: linear-gradient(to right, #434343 0%, black 100%);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.add-to-bag:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.favorite {
+    background: transparent;
+    color: #434343;
+    border: 2px solid #434343;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.favorite:hover {
+    background: #434343;
+    color: white;
+    cursor: pointer;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            background-color: tomato;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: white;
+            text-decoration: underline;
+            text-decoration-color: lightcoral;
+            margin-bottom: 30px;
+        }
+
+        .rules {
+            color: white;
+            margin-bottom: 30px;
+            max-width: 600px;
+            text-align: left;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            background-color: snow;
+            padding: 2px;
+            border: 2px solid snow;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            background-color: tomato;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .cell:hover {
+            background-color: #ff6347;
+        }
+
+        .cell img {
+            max-width: 100%;
+            max-height: 100%;
+            display: none;
+        }
+
+        .cell.revealed img {
+            display: block;
+        }
+
+        .reset-btn {
+            padding: 10px 30px;
+            font-size: 16px;
+            background-color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px lightcoral;
+            transition: transform 0.2s;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+    <title>Battleship</title>
+</head>
+<body>
+    <h1>Battleship</h1>
+    
+    <div class="rules">
+        <p>1. Click on the cells to reveal the image hidden behind them.</p>
+        <p>2. There are 5 ships hidden in the game.</p>
+        <p>3. You win if you can find all ships in less than 8 clicks, else you lose.</p>
+    </div>
+
+    <div class="game-container">
+        <div class="grid" id="gameGrid"></div>
+        <button class="reset-btn" onclick="resetGame()">Reset</button>
+    </div>
+
+    <script>
+        let clicks = 0;
+        let shipsFound = 0;
+        const totalShips = 5;
+        const maxClicks = 8;
+        
+        // Ship positions (0 for sea, 1 for ship)
+        let gameBoard = [
+            [1, 0, 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 1, 1],
+            [1, 0, 0, 0]
+        ];
+
+        function createGrid() {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 4; i++) {
+                for (let j = 0; j < 4; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.setAttribute('data-row', i);
+                    cell.setAttribute('data-col', j);
+                    
+                    const img = document.createElement('img');
+                    img.src = gameBoard[i][j] === 1 ? 'https://ik.imagekit.io/d9mvewbju/Course/BigbinaryAcademy/battleship-image_e6bWCZ1w4.png' : 'https://ik.imagekit.io/d9mvewbju/Course/BigbinaryAcademy/seamless-pattern-waves-various-shades-blue-vector-underwater-design-96891651_aSd5pmbaM.webp';
+                    img.alt = gameBoard[i][j] === 1 ? 'ship' : 'sea';
+                    cell.appendChild(img);
+                    
+                    cell.addEventListener('click', handleCellClick);
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function handleCellClick(e) {
+            if (e.target.classList.contains('revealed')) return;
+            
+            clicks++;
+            const cell = e.target;
+            cell.classList.add('revealed');
+            
+            const row = parseInt(cell.getAttribute('data-row'));
+            const col = parseInt(cell.getAttribute('data-col'));
+            
+            if (gameBoard[row][col] === 1) {
+                shipsFound++;
+            }
+            
+            checkGameStatus();
+        }
+
+        function checkGameStatus() {
+            if (shipsFound === totalShips && clicks <= maxClicks) {
+                alert('You Won!');
+                resetGame();
+            } else if (clicks >= maxClicks && shipsFound < totalShips) {
+                alert('You Lost!');
+                resetGame();
+            }
+        }
+
+        function resetGame() {
+            clicks = 0;
+            shipsFound = 0;
+            createGrid();
+        }
+
+        // Initialize the game
+        createGrid();
+    </script>
+</body>
+</html>

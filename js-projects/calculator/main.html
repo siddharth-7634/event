@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <style>
+        body {
+            font-family: Helvetica, sans-serif;
+            background-color: #ecf0f1;
+            color: #2d2d2d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: snow;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .display {
+            background-color: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: right;
+            font-size: 24px;
+            border-radius: 8px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 15px;
+            font-size: 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .number {
+            background-color: lightgray;
+        }
+
+        .operator {
+            background-color: palevioletred;
+            color: white;
+        }
+
+        .equals {
+            background-color: lightgray;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">0</div>
+        <div class="buttons">
+            <button class="number">1</button>
+            <button class="number">2</button>
+            <button class="number">3</button>
+            <button class="operator">C</button>
+            <button class="operator">%</button>
+            
+            <button class="number">4</button>
+            <button class="number">5</button>
+            <button class="number">6</button>
+            <button class="operator">+</button>
+            <button class="operator">-</button>
+            
+            <button class="number">7</button>
+            <button class="number">8</button>
+            <button class="number">9</button>
+            <button class="operator">÷</button>
+            <button class="operator">×</button>
+            
+            <button class="number">.</button>
+            <button class="number">0</button>
+            <button class="equals">=</button>
+            <button class="operator">Del</button>
+            <button class="operator">Exp</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        let previousInput = '';
+        let operation = null;
+        let resetScreen = false;
+
+        const display = document.querySelector('.display');
+        const buttons = document.querySelector('.buttons');
+
+        buttons.addEventListener('click', e => {
+            if (!e.target.matches('button')) return;
+
+            const button = e.target;
+            const buttonText = button.textContent;
+
+            if (button.classList.contains('number')) {
+                handleNumber(buttonText);
+            } else if (button.classList.contains('operator')) {
+                handleOperator(buttonText);
+            } else if (button.classList.contains('equals')) {
+                handleEquals();
+            }
+
+            updateDisplay();
+        });
+
+        function handleNumber(num) {
+            if (currentInput === '0' || resetScreen) {
+                currentInput = num;
+                resetScreen = false;
+            } else {
+                currentInput += num;
+            }
+        }
+
+        function handleOperator(op) {
+            if (op === 'C') {
+                currentInput = '0';
+                previousInput = '';
+                operation = null;
+                return;
+            }
+
+            if (op === 'Del') {
+                currentInput = currentInput.slice(0, -1) || '0';
+                return;
+            }
+
+            if (operation && previousInput && !resetScreen) {
+                handleEquals();
+            }
+
+            previousInput = currentInput;
+            operation = op;
+            resetScreen = true;
+        }
+
+        function handleEquals() {
+            if (!operation || !previousInput) return;
+
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+
+            let result;
+            switch (operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '×':
+                    result = prev * current;
+                    break;
+                case '÷':
+                    result = prev / current;
+                    break;
+                case '%':
+                    result = prev % current;
+                    break;
+                case 'Exp':
+                    result = Math.pow(prev, current);
+                    break;
+            }
+
+            currentInput = result.toString();
+            operation = null;
+            previousInput = '';
+            resetScreen = true;
+        }
+
+        function updateDisplay() {
+            display.textContent = currentInput;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #487346;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg %3E%3Cpolygon fill='%234c8e43' points='100 57.1 64 93.1 71.5 100.6 100 72.1'/%3E%3Cpolygon fill='%236aac5f' points='100 57.1 100 72.1 128.6 100.6 136.1 93.1'/%3E%3Cpolygon fill='%234c8e43' points='100 163.2 100 178.2 170.7 107.5 170.8 92.4'/%3E%3Cpolygon fill='%236aac5f' points='100 163.2 29.2 92.5 29.2 107.5 100 178.2'/%3E%3Cpath fill='%2389CC7C' d='M100 21.8L29.2 92.5l70.7 70.7l70.7-70.7L100 21.8z M100 127.9L64.6 92.5L100 57.1l35.4 35.4L100 127.9z'/%3E%3Cpolygon fill='%23768c3a' points='0 157.1 0 172.1 28.6 200.6 36.1 193.1'/%3E%3Cpolygon fill='%2396ac58' points='70.7 200 70.8 192.4 63.2 200'/%3E%3Cpolygon fill='%23B6CC76' points='27.8 200 63.2 200 70.7 192.5 0 121.8 0 157.2 35.3 192.5'/%3E%3Cpolygon fill='%2396ac58' points='200 157.1 164 193.1 171.5 200.6 200 172.1'/%3E%3Cpolygon fill='%23768c3a' points='136.7 200 129.2 192.5 129.2 200'/%3E%3Cpolygon fill='%23B6CC76' points='172.1 200 164.6 192.5 200 157.1 200 157.2 200 121.8 200 121.8 129.2 192.5 136.7 200'/%3E%3Cpolygon fill='%23768c3a' points='129.2 0 129.2 7.5 200 78.2 200 63.2 136.7 0'/%3E%3Cpolygon fill='%23B6CC76' points='200 27.8 200 27.9 172.1 0 136.7 0 200 63.2 200 63.2'/%3E%3Cpolygon fill='%2396ac58' points='63.2 0 0 63.2 0 78.2 70.7 7.5 70.7 0'/%3E%3Cpolygon fill='%23B6CC76' points='0 63.2 63.2 0 27.8 0 0 27.8'/%3E%3C/g%3E%3C/svg%3E");
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 2rem;
+            font-family: Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            z-index: 2;
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            width: 16rem;
+            z-index: 2;
+        }
+
+        .cell {
+            background: white;
+            border: 2px solid #d1d5db;
+            height: 5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cell.winner {
+            background: #bbf7d0;
+        }
+
+        .status {
+            margin-top: 1rem;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: bold;
+            height: 1.5rem;
+            z-index: 2;
+        }
+
+        .reset-btn {
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .reset-btn:hover {
+            background: #16a34a;
+        }
+    </style>
+</head>
+<body>
+    <div class="mountains"></div>
+    <h1>Tic-Tac-Toe</h1>
+    <div class="game-board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+    </div>
+    <div class="status"></div>
+    <button class="reset-btn">Reset</button>
+
+    <script>
+        const gameBoard = document.querySelector('.game-board');
+        const cells = document.querySelectorAll('.cell');
+        const status = document.querySelector('.status');
+        const resetBtn = document.querySelector('.reset-btn');
+
+        let currentPlayer = 'X';
+        let gameState = Array(9).fill('');
+        let gameActive = true;
+        let clickCount = 0;
+
+        const winningCombos = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+            [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+            [0, 4, 8], [2, 4, 6] // Diagonals
+        ];
+
+        function handleClick(e) {
+            const cell = e.target;
+            const index = cell.dataset.index;
+
+            if (gameState[index] || !gameActive) return;
+
+            gameState[index] = currentPlayer;
+            cell.textContent = currentPlayer;
+            clickCount++;
+
+            if (checkWinner()) {
+                gameActive = false;
+                status.textContent = `${currentPlayer} wins!`;
+                return;
+            }
+
+            if (clickCount === 9) {
+                gameActive = false;
+                status.textContent = "It's a draw!";
+                return;
+            }
+
+            currentPlayer = clickCount % 2 === 0 ? 'X' : 'O';
+        }
+
+        function checkWinner() {
+            return winningCombos.some(combo => {
+                if (
+                    gameState[combo[0]] &&
+                    gameState[combo[0]] === gameState[combo[1]] &&
+                    gameState[combo[0]] === gameState[combo[2]]
+                ) {
+                    combo.forEach(index => {
+                        cells[index].classList.add('winner');
+                    });
+                    return true;
+                }
+                return false;
+            });
+        }
+
+        function resetGame() {
+            gameState = Array(9).fill('');
+            gameActive = true;
+            clickCount = 0;
+            currentPlayer = 'X';
+            status.textContent = '';
+            
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('winner');
+            });
+        }
+
+        cells.forEach(cell => {
+            cell.addEventListener('click', handleClick);
+        });
+
+        resetBtn.addEventListener('click', resetGame);
+    </script>
+</body>
+</html>
