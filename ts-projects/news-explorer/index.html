@@ -1,0 +1,22 @@
+<link rel="stylesheet" href="styles.css"/>
+<div class="container">
+    <header>
+      <input type="text" id="search" placeholder="Search for News" />
+    </header>
+
+    <main>
+      <h1>Top Stories for You</h1>
+      <div class="tags">
+        <button class="tag active" data-category="all">All</button>
+        <button class="tag" data-category="business">Business</button>
+        <button class="tag" data-category="politics">Politics</button>
+        <button class="tag" data-category="sport">Sports</button>
+        <button class="tag" data-category="entertainment">Entertainment</button>
+        <button class="tag" data-category="tech">Tech</button>
+      </div>
+
+      <div id="news-cards" class="news-grid"></div>
+      <button id="show-more" class="hidden">Show More</button>
+      <script src="script.js"></script>
+    </main>
+  </div>
